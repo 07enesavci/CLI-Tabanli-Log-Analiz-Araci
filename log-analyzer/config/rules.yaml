@@ -1,0 +1,369 @@
+
+rules:
+  # Kimlik doğrulama / Giriş
+  - name: "Parola Denemesi"
+    pattern: ".*failed password.*|.*authentication failure.*|.*invalid password.*"
+    severity: "yüksek"
+    description: "Başarısız parola kimlik doğrulama denemeleri"
+    enabled: true
+    
+  - name: "Brute Force"
+    pattern: ".*failed.*password.*|.*authentication.*failure.*"
+    severity: "kritik"
+    description: "Aynı kaynaktan çoklu başarısız giriş denemesi"
+    enabled: true
+    
+  - name: "Root Giriş Denemesi"
+    pattern: ".*(root\\s+login|sshd.*root|\\bsu\\s+-.*root|\\bsu\\s+root).*"
+    severity: "kritik"
+    description: "Doğrudan root giriş denemeleri "
+    enabled: true
+    
+  - name: "Geçersiz Kullanıcı Girişi"
+    pattern: ".*invalid user.*|.*user.*not.*exist.*|.*unknown.*user.*"
+    severity: "yüksek"
+    description: "Var olmayan kullanıcılarla giriş denemesi "
+    enabled: true
+    
+  - name: "Parola Değiştirme Denemesi"
+    pattern: ".*password.*change.*|.*passwd.*|.*chpasswd.*"
+    severity: "orta"
+    description: "Parola değiştirme denemeleri "
+    enabled: true
+    
+  - name: "SSH Giriş Denemesi"
+    pattern: ".*bad.*key.*|.*invalid.*key.*|.*key.*verification.*failed.*"
+    severity: "yüksek"
+    description: "SSH anahtar kimlik doğrulama hataları "
+    enabled: true
+    
+  - name: "Hesap Kilidi"
+    pattern: ".*account.*locked.*|.*account.*disabled.*|.*too.*many.*failures.*"
+    severity: "yüksek"
+    description: "Hesap kilitleme olayları "
+    enabled: true
+
+  # Yetkisiz erişim / Yetki yükseltme
+  - name: "Yetkisiz Erişim"
+    pattern: ".*unauthorized.*|.*Unauthorized.*|.*access.*denied.*|.*permission.*denied.*"
+    severity: "kritik"
+    description: "Yetkisiz erişim denemeleri"
+    enabled: true
+    
+  - name: "yetki Yükseltme"
+    pattern: ".*(sudo.*(authentication failed|invalid|permission denied)|\\bsu\\s+-\\s|privilege.*escalation|elevated.*privileges).*"
+    exclude_pattern: ".*conversation failed.*"
+    severity: "kritik"
+    description: "Yetki yükseltme denemeleri "
+    enabled: true
+    
+  - name: "SUID/SGID Çalıştırma"
+    pattern: ".*setuid.*|.*setgid.*|.*chmod.*4755.*|.*chmod.*6755.*"
+    severity: "yüksek"
+    description: "SUID/SGID dosya çalıştırma "
+    enabled: true
+    
+  - name: "Kernel Modülü Yükleme"
+    pattern: ".*insmod.*|.*modprobe.*|.*kernel.*module.*|.*load.*module.*"
+    severity: "kritik"
+    description: "Kernel modülü yükleme "
+    enabled: true
+    
+  - name: "Cron Görevi Değişikliği"
+    pattern: ".*(crontab\\s+(-e|-r|-l)|/var/spool/cron|/etc/cron\\.d/).*"
+    severity: "yüksek"
+    description: "Cron görevi oluşturma/değiştirme "
+    enabled: true
+
+  # Web Kontrolü
+  - name: "SQL Injection Denemesi"
+    pattern: "(?i).*(union\\s+(all\\s+)?select|select\\s+.*\\bfrom\\b|insert\\s+into|update\\s+.*\\bset\\b|delete\\s+from|exec\\s*\\(|execute\\s*\\().*"
+    severity: "kritik"
+    description: "SQL injection saldırısı "
+    enabled: true
+    
+  - name: "XSS Saldırısı "
+    pattern: ".*(<script)|(javascript:)|(onerror=)|(onload=)|(onclick=)|(eval\\().*"
+    severity: "yüksek"
+    description: "XSS saldırısı "
+    enabled: true
+    
+  - name: "Komut Enjeksiyonu"
+    pattern: ".*(\\|\\||\\$\\(|exec\\s*\\(|system\\s*\\(|shell_exec|passthru).*"
+    severity: "kritik"
+    description: "Komut enjeksiyonu saldırısı "
+    enabled: true
+    
+  - name: "Dizin Gezinme"
+    pattern: '.*(\.\./)|(\.\.\\)|(%2e%2e)|(%252e)|(/etc/passwd)|(/etc/shadow).*'
+    severity: "yüksek"
+    description: "Dizin gezinme işlemi"
+    enabled: true
+    
+  - name: "LFI/rfı"
+    pattern: ".*(include.*\\.\\.)|(require.*\\.\\.)|(php://)|(data://)|(expect://).*"
+    severity: "kritik"
+    description: "LFI/RFI saldırısı"
+    enabled: true
+    
+  - name: "XXE Saldırısı"
+    pattern: ".*(<!ENTITY)|(SYSTEM.*file)|(SYSTEM.*http).*"
+    severity: "yüksek"
+    description: "XXE enjeksiyon denemeleri"
+    enabled: true
+    
+  - name: "SSRF Denemesi"
+    pattern: ".*(file://|gopher://|dict://|curl.*127\\.0\\.0\\.1|wget.*localhost).*"
+    severity: "yüksek"
+    description: "SSRF denemesi"
+    enabled: true
+    
+  - name: "Şüpheli Tarayıcı Kimliği"
+    pattern: ".*(sqlmap)|(nikto)|(nmap)|(masscan)|(zap)|(burp)|(w3af)|(havij)|(acunetix).*"
+    severity: "orta"
+    description: "Şüpheli tarayıcı işlemleri"
+    enabled: true
+    
+  - name: "Shell Alma Denemesi"
+    pattern: ".*(\\bc99\\b|\\br57\\b|webshell|shell\\.php|cmd\\.php|eval\\.php).*"
+    severity: "kritik"
+    description: "Web Shell denemesi"
+    enabled: true
+
+  #  Ağ
+  - name: "Port Taraması"
+    pattern: ".*(port.*scan)|(connection.*refused)|(syn.*flood)|(nmap)|(masscan).*"
+    severity: "yüksek"
+    description: "Port tarama sı tespiti"
+    enabled: true
+    
+  - name: "DDoS Saldırısı"
+    pattern: ".*(flood)|(syn.*flood)|(udp.*flood)|(icmp.*flood)|(connection.*limit).*"
+    severity: "kritik"
+    description: "DDoS Atağı"
+    enabled: true
+
+  - name: "Fİrewall Engeli"
+    pattern: ".*(UFW BLOCK)|(iptables.*DROP)|(firewall.*block)|(connection.*blocked).*"
+    severity: "orta"
+    description: "Firewall şüpheli bağlantıları engelliyor"
+    enabled: true
+    
+  - name: "DNS Tünelleme"
+    pattern: ".*(dns.*tunnel)|(dnscat)|(iodine)|(dns2tcp).*"
+    severity: "yüksek"
+    description: "DNS tünelleme denemesi"
+    enabled: true
+
+  # Malware
+  - name: "Arka Kapı Kurulumu"
+    pattern: ".*(backdoor)|(trojan)|(rootkit)|(malware)|(virus).*"
+    severity: "kritik"
+    description: "Arka kapı/zararlı yazılım kurulum denemeleri"
+    enabled: true
+    
+  - name: "Mining"
+    pattern: ".*(miner)|(mining)|(xmrig)|(cpuminer)|(cryptocurrency)|(bitcoin.*miner).*"
+    severity: "yüksek"
+    description: "Kripto para madenciliği "
+    enabled: true
+    
+  - name: "Fidye Yazılımı Etkinliği"
+    pattern: ".*(ransomware)|(encrypt.*files)|(decrypt.*key)|(bitcoin.*payment).*"
+    severity: "kritik"
+    description: "Fidye yazılımı etkinliği"
+    enabled: true
+    
+  - name: "Key Logger"
+    pattern: ".*(keylog)|(keystroke)|(key.*capture).*"
+    severity: "kritik"
+    description: "Key Logger"
+    enabled: true
+
+  # Sistem 
+  - name: "Sistem Dosyası Değişikliği"
+    pattern: ".*(/etc/passwd)|(/etc/shadow)|(/etc/sudoers)|(/etc/hosts).*"
+    severity: "kritik"
+    description: "Kritik sistem dosyası değişiklik denemeleri"
+    enabled: true
+    
+  - name: "Servis Değişikliği"
+    pattern: ".*(systemctl.*stop)|(service.*stop)|(killall)|(pkill).*"
+    severity: "yüksek"
+    description: "Sistem servisi müdahalesi "
+    enabled: true
+    
+  - name: "Log Silme"
+    pattern: ".*(log.*clear)|(journalctl.*clear)|(rm.*-rf.*log).*"
+    severity: "kritik"
+    description: "Log dosyası silme "
+    enabled: true
+    
+  - name: "Geçmiş Silme"
+    pattern: ".*(history.*-c)|(unset.*HISTFILE)|(rm.*history).*"
+    severity: "yüksek"
+    description: "Komut geçmişi silme "
+    enabled: true
+    
+  - name: "Güvenlik Duvarı Kapatma"
+    pattern: ".*(ufw.*disable)|(iptables.*-F)|(firewall.*stop).*"
+    severity: "kritik"
+    description: "Güvenlik duvarı kapatma "
+    enabled: true
+
+  - name: "Antivirüs Kapatma"
+    pattern: ".*(antivirus.*stop)|(clamav.*stop)|(av.*disable).*"
+    severity: "kritik"
+    description: "Antivirüs/güvenlik yazılımı kapatma"
+    enabled: true
+
+  # Reverse Shell
+  - name: "Reverse Shel"
+    pattern: ".*(bash.*-i)|(nc.*-e)|(netcat.*-e)|(python.*-c.*socket)|(perl.*socket).*"
+    severity: "kritik"
+    description: "Reverse Shell"
+    enabled: true
+    
+  - name: "Base64 Kodlu Komutlar"
+    pattern: ".*(base64.*-d)|(echo.*base64)|(base64.*decode).*"
+    severity: "yüksek"
+    description: "Base64 kodlu komut çalıştırma "
+    enabled: true
+    
+  - name: "PowerShell Gizleme"
+    pattern: ".*(powershell.*-enc)|(invoke-expression)|(iex.*-command).*"
+    severity: "yüksek"
+    description: "Gizlenmiş PowerShell çalıştırma"
+    enabled: true
+    
+  - name: "Şüpheli İndirme"
+    pattern: ".*(wget.*http)|(curl.*http)|(fetch.*http).*"
+    severity: "orta"
+    description: "İnternetten şüpheli dosya indirme"
+    enabled: true
+    
+  - name: "Süreç Gizleme"
+    pattern: ".*(ps.*aux.*grep.*-v)|(hide.*process)|(process.*hiding).*"
+    severity: "yüksek"
+    description: "Süreç gizleme "
+    enabled: true
+
+  # Saldırı
+  - name: "Ağ Dinleme"
+    pattern: ".*(tcpdump)|(wireshark)|(tshark)|(ettercap)|(ettercap).*"
+    severity: "yüksek"
+    description: "Ağ dinleme/paket yakalama "
+    enabled: true
+    
+  - name: "Parola Kırma Araçları"
+    pattern: ".*(john.*the.*ripper)|(hashcat)|(hydra)|(medusa)|(ncrack).*"
+    severity: "kritik"
+    description: "Parola kırma denemesi"
+    enabled: true
+    
+  - name: "Exploitation"
+    pattern: ".*(exploit)|(metasploit)|(msfconsole)|(payload).*"
+    severity: "kritik"
+    description: "Exploitation"
+    enabled: true
+
+  # Dosya
+  - name: "Gizli Dosya Erişimi"
+    pattern: ".*(/\\.[^/\"\\s]+)|(hidden.*file)|(dotfile).*"
+    severity: "düşük"
+    description: "Gizli dosya erişimi "
+    enabled: true
+    
+  - name: "Hassas Dosya Erişimi"
+    pattern: ".*(\\.env)|(\\.git)|(\\.ssh/id_rsa)|(\\.aws/credentials).*"
+    severity: "yüksek"
+    description: "Hassas yapılandırma dosyası erişimi"
+    enabled: true
+    
+  - name: "Toplu Dosya Silme"
+    pattern: ".*(rm.*-rf.*\\*)|(delete.*all)|(wipe.*disk).*"
+    severity: "kritik"
+    description: "Toplu dosya silme "
+    enabled: true
+    
+  - name: "Dosya İzin Değişikliği"
+    pattern: ".*(chmod.*777)|(chmod.*000)|(chown.*root).*"
+    severity: "orta"
+    description: "Şüpheli dosya izni değişikliği"
+    enabled: true
+
+  # API / Kimlik 
+  - name: "API Kötüye Kullanımı"
+    pattern: ".*(api.*rate.*limit)|(429.*too.*many)|(api.*abuse).*"
+    severity: "orta"
+    description: "API hız sınırı tetiklendi "
+    enabled: true
+    
+  - name: "JWT Token manipulasyonu"
+    pattern: ".*(jwt.*invalid)|(token.*expired)|(token.*tampered).*"
+    severity: "yüksek"
+    description: "JWT token manipulasyonu"
+    enabled: true
+    
+  - name: "OAuth Kötüye Kullanımı"
+    pattern: ".*(oauth.*error)|(invalid.*grant)|(token.*replay).*"
+    severity: "yüksek"
+    description: "OAuth kimlik doğrulama "
+    enabled: true
+    
+  - name: "GraphQL Injection"
+    pattern: ".*(graphql.*error)|(query.*injection)|(mutation.*abuse).*"
+    severity: "yüksek"
+    description: "GraphQL INjection"
+    enabled: true
+
+  # Genel  İzleme 
+  - name: "Hata Kaydı"
+    pattern: ".*(\\berror\\b|\\bError\\b|\\bERROR\\b|\\bfatal\\b|\\bFATAL\\b).*"
+    exclude_pattern: ".*(AgentAnalytics|SQLITE_ERROR|GDBus\\.Error|ACPI\\s+Error|ACPI\\s+BIOS|error\\.log|NoSuchLink|Error storing AI code hashes).*"
+    severity: "yüksek"
+    description: "Loglardaki hata mesajları "
+    enabled: true
+    
+  - name: "SSH Bağlantısı"
+    pattern: ".*sshd.*|.*ssh.*connection.*|.*openssh.*"
+    severity: "orta"
+    description: "SSH bağlantı denemesi"
+    enabled: true
+    
+log_files:
+  # Sistem
+  - path: "/var/log/auth.log"
+    type: "auth"
+    enabled: true
+  - path: "/var/log/syslog"
+    type: "system"
+    enabled: true
+  # Web
+  - path: "/var/log/nginx/access.log"
+    type: "nginx"
+    enabled: true
+  - path: "/var/log/nginx/error.log"
+    type: "nginx"
+    enabled: true
+  - path: "/var/log/apache2/access.log"
+    type: "apache"
+    enabled: true
+  - path: "/var/log/apache2/error.log"
+    type: "apache"
+    enabled: true
+  # Ağ 
+  - path: "/var/log/ufw.log"
+    type: "ufw"
+    enabled: true
+  # Veritabanı
+  - path: "/var/log/mysql/error.log"
+    type: "mysql"
+    enabled: true
+  - path: "/var/log/postgresql/postgresql.log"
+    type: "postgresql"
+    enabled: true
+  # Denetim
+  - path: "/var/log/audit/audit.log"
+    type: "audit"
+    enabled: true

@@ -1,0 +1,27 @@
+.stats-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border-top: 4px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stats-card-title {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stats-card-value {
+  font-size: 32px;
+  font-weight: 700;
+}

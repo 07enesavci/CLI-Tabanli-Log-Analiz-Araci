@@ -1,0 +1,15 @@
+services:
+  log-analyzer:
+    build: .
+    container_name: log-analyzer
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config:/app/config
+      - /var/log:/var/log
+      - /tmp:/tmp
+      - .:/app/workspace
+    environment:
+      - PORT=8080
+    restart: unless-stopped
+    command: ["./api"]
